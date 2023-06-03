@@ -1,0 +1,330 @@
+
+
+
+
+<html>
+	<link rel="stylesheet" type="text/css" href="prism.css">
+	<style>
+		heading {
+			text-align: center;
+		}
+		paragraph {
+			display: block;
+			position: absolute;
+			max-width: 90%;
+			left: 50%;
+			transform: translate(-50%, 0);
+			text-align: justify;
+			overflow: auto;
+		}
+		code {
+			text-align: left !important;
+			background-color: #ddd !important;
+			border: 1px solid #999;
+			display: block;
+			padding 20px;
+		}
+	</style>
+	<body>
+		<heading>
+			<h1>Compilers with non-tam-masculinum</h1>
+			<h3>part 1: the language</h3>
+		</heading>
+		<paragraph>
+			<p>
+				To whom it may concern<br/>
+				I am designing and building a programming language, in this series I will chronical my journey from nothing to not nothing
+				. This series will end when I have a working compiler and likely will only be released by then as well.<br/>
+				I should start with the language I will be developing, by name it shall be reffered to as disponens omnia, latin for arranging everything, and by
+				value it shall be known as the minimalist language. It was designed by removing as many language features from C as possible until it becomes
+				incredibly difficult to write code that will make me weep. Now you may wonder the benefits of such a language, and simply put you get easily debugged
+				and (hopefully) followed code. For example a in C a fibonacci function would look like this:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int fibonacci(int x) {
+	int t1 = 0, t2 = 1, nt = t1 + t2;
+	for(int i = 3; i &lt;= x; i++) {
+		t1 = t2;
+		t2 = nt;
+		nt = t1 + t2;
+	}
+	return nt;
+}
+</code>
+</pre>
+			<p>
+				And in disponens omnia it would look more like this:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int fibonacci(int c) {
+	if(c &lt; 2) return(1);
+	return(fibonacci(c - 1, c - 2));
+}
+</code>
+</pre>
+			<p>
+				Of course you can write the same function in C, but in disponens omnia it is the only way to write it. The pro of having more features is having
+				more, easier to understand ways to do things, but the con of having more features if having more, less readable ways to do things.<br/>
+				Disponens omnia has 10 keywords
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int
+char
+float
+struct
+enum
+union
+if
+else
+mut
+return
+</code>
+</pre>
+			<p>
+				Among these keywords there are three datatypes three complex datatypes three control flow operations and one datatype manipulation keyword.
+				int, char, and float are datatypes. Datatypes are the types of variables you can have, int is for whole numbers, short for integer, char is
+				a one byte integer that is interpereted as ascii characters, short for character, and float is for decimal numbers, short for floating point.
+				ints and floats take up four bytes of space and char takes up one. struct, enum, and union are complex datatypes. These are datatypes that are
+				not of the three simple ones (int, char, and float). struct is a datatype that holds other datatypes, for example:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+struct entity {
+	int x;
+	int y;
+	int radius;
+};
+</code>
+</pre>
+			<p>
+				You can get the data from a struct using the syntax "struct_name.value_name" like so:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+mut struct entity e;
+e.x = 10;
+e.y = 10;
+e.radius = 3;
+</code>
+</pre>
+			<p>
+				These structs are simply containers for related values to be grouped together. An enum is a wrapper for the int datatype in which every value has a
+				name, for example:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+enum time {
+	time_year=31536000,
+	time_week=604800,
+	time_day=86400,
+	time_hour=3600,
+	time_minute=60,
+	time_second=1,
+	time_millisecond=0.001
+};
+</code>
+</pre>
+			<p>
+				enums are used to avoid magic numbers for example the enum above can be used to calculate the number of seconds from a specific time like so:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int seconds_from_time(int milliseconds, int seconds, int minute, int hour, int day, int week, int year) {
+	return(milliseconds * time_millisecod + \
+		   seconds * time_second + \
+		   minute * time_minute + \
+		   hour * time_hour + \
+		   day * time_day + \
+		   week * time_week + \
+		   year * time_week);
+}
+</code>
+</pre>
+			<p>
+				unions sound useless but are not somehow, they are essentially a struct that can only store one of its values. For example we could be making an
+				interpereter for a language, we could store a seperate array for each type but that would be ineffecient to search through. Instead we would have
+				a union named value which could then be placed in a struct var which can then be put in an array. This would be done as such:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+union value {
+	int i;
+	char c;
+	float f;
+};
+struct var {
+	union value val;
+	char *name;
+};
+mut struct var stack[100];
+</code>
+</pre>
+			<p>
+				We then have the control flow keywords, you do not have a turing complete programming language if you dont have a way to control flow. I have found
+				that we only need three to make a usable programming language, if, else, return. If statements simply take an expression and if it evaluates 0 then
+				it skips the code in its block, else it skips its block and goes to the next else block (provided there is one) its block, for example:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+if(x &lt; 10) {
+	y = x * 12;
+} else {
+	y = x * 6;
+}
+</code>
+</pre>
+			<p>
+				note that just as c does if/else blocks can be implied so that only one line is used, which allows for if else statements like so:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+if(x &lt; 10) y = x * 12;
+else if(x &lt; 20) y = x * 6;
+else y = x * 3;
+</code>
+</pre>
+			<p>
+				which is equivalent to:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+if(x &lt; 10) {
+	y = x * 12;
+} else {
+	if(x &lt; 20) {
+		y = x * 6;
+	} else {
+		y = x * 3;
+	}
+}
+</code>
+</pre>
+			<p>
+				The final control flow keyword is return, which is a bit of a special case. In disponens omnia you can have functions, and these functions can be
+				called to complete the code in its block, which can also evaluate to some type, to display this we shall analyse a constructor function for an
+				entity struct:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+struct entity {
+	int x;
+	int y;
+	int r;
+};
+struct entity /*this is the type that the function returns*/ entity_new /*the name*/ (int x, int y, int r) /* the parameters to be passed in */ {
+	struct entity ret;
+	ret.x = x;
+	ret.y = y;
+	ret.r = r;
+	return(ret); /*This places you back to the place of calling and evaluates the function to ret*/
+}
+
+int main() /*main is the entry point of our program*/ {
+	struct entity e = entity_new(0, 20, 3); /*this will set e to the value that entity_new evaluates to with the parameters x: 0, y: 20, r: 3 returns*/
+	return 0; /*0 is the successful run value*/
+}
+</code>
+</pre>
+			<p>
+				You may have noticed that we do not have a control flow operation for loops, this is because we can use functions to do the same thing with less
+				state change! Why though you ask would we need to minimize state change. Well when we change the state of a function we need to take that change into
+				account when reading and debugging, which is fine for smaller statements, but for large amounts of state change, the number of things to think about
+				exponentially increases. A loop that simply adds all the elements of an array would look like this in C:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int main() {
+	int k = 0;
+	int a[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	for(int i = 0; i &lt; 10; i++) {
+		k += a[i];
+	}
+}
+</code>
+</pre>
+			<p>
+				and in disponens omnia it looks like so:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int sum(int a[], int i) {
+	if(i - 1 == 0) return a[0];
+	return sum(a, i - 1) + a[i - 1];
+}
+int main() {
+	int a[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	int k = sum(a, 10);
+}
+</code>
+</pre>
+			<p>
+				In the C program we change state 20 times, each time we iterate i and each time we add a[i] to k, but in the disponens omnia we dont change state.
+				This is because we instead create a new state that evaluates to some value. This is good because we only need to make sure that one state per edge
+				case is viable, rather than multiple states per every edge case, there is just less that needs to be thought about. And yet again you can write these
+				functions in c but you cannot write the loops in disponens omnia, less ways to fail.<br/>
+				Now finally we have the mut keyword, categorised as a datatype modifier, it exists as the only compromise in value. The mut keyword is the opposite of
+				the const keyword in c, it allows you to change variables which by default you cannot do. This means that variables start as constants, causing you
+				to think just a little bit more about whether or not a value should change state. It is used like this:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int function(int k) {
+	return k + 13 * k;
+}
+int main() {
+	mut int k = 10;
+	k = function(k);
+}
+</code>
+</pre>
+			<p>
+				You can only change a mutable value in the state it was created, this means that functions cannot change a value placed inside of it, this just makes
+				tracking variable change easier, simply put this wouldnt compile:
+			</p>
+<pre>
+<code class="language-c line-numbers">
+int function(mut int k) {
+	k += 13 * k;
+}
+</code>
+</pre>
+			<p>
+				That wraps up keywords, which leads us into operations.
+			</p>
+<pre>
+<code class="language-c line-numbers">
+a + b // evaluate to a add b
+a - b // evaluate to a subtract b
+a * b // evaluate to a multiplied by b
+a / b // evaluate to a divided by b
+a, b // evaluate a and b and evaluate to b
+a.b // get the value of name b from struct/union a
+a &amp; b // for all bits of a and b if both of the corresponding bits is one the evaluated value will have a corresponding bit of one
+a | b // for all bits of a and b if any of the corresponding bits is one the evaluated value will have a corresponding bit of one
+a ^ b // for all bits of a and b if only one bit is one the evaluated value will have a corresponding bit of one
+~a // flips all the bits of a
+!a // if a is not zero, evaluate zero, else evaluate 1
+a = b // sets the value of a to b and evaluates to b
+a == b // if a is equal to b evaluate 1 else evaluate 0
+a != b // if a is not equal to b evaluate to 1 else 0
+a &lt; b // evaluates 1 if a is lesser than b else 0
+a &gt; b // evaluates 1 if a is greater than b else 0
+a &amp;&amp; b // evaluates 1 if both a and b evaluate to non zero, else evaluates 0
+a || b // evaluates 1 if either a or b evaluate to non zero, else evaluates 0
+(a) // a will happen before outside expressions
+a[b] // gets valyue at index b from a
+{a} // creates a block in which all variables created in code a are deleted when the block is exited
+</code>
+</pre>
+			<p>
+				These are the specs of disponens omnia that I will be building a compiler for, and this is the end of part one.<br/>
+				Kind regards,<br/>
+				non-tam-masculinum
+			</p>
+		</paragraph>
+	</body>
+	<script src="prism.js"></script>
+</html>
